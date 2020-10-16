@@ -36,10 +36,11 @@ export class ProductEditComponent implements OnInit {
 
   onSubmit() {
     const product = this.productForm.value;
-    product.id = Math.random() * 100000 + 1;
     if (this.editMode) {
+      product.id = this.product.id;
       this.store.dispatch(updateProduct({index: this.index, newProduct: product}));
     } else {
+      product.id = Math.floor(Math.random() * 100000 + 1);
       this.store.dispatch(addProduct({product}));
     }
     this.onCancel();
