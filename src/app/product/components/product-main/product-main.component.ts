@@ -1,7 +1,9 @@
+import { Product } from 'src/app/shared/models/product.model';
+import { tap, map, switchMap, mergeMap } from 'rxjs/operators';
 import { State } from './../../../store/reducers/product.reducer';
 import { Component, OnInit } from '@angular/core';
 import { ProductApiService } from 'src/app/shared/services/product-api-call.service';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Store } from '@ngrx/store';
 
@@ -18,18 +20,18 @@ export class ProductMainComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.store.select('state').subscribe((state: State) => {
-      if (state.products.length === 0) {
-        this.spinner.show();
-        this.productsSub = this.api.fetchProducts().subscribe(
-          () => {
-            this.spinner.hide();
-          },
-          () => {
-            this.spinner.hide();
+    this.store.select('state')
+      .pipe(
+        map((state: State) => {
+          return state.products;
+        }),
+        switchMap((products: Product[]) => {
+          if (products.length === 0) {
+            return this.api.fetchProducts();
+          } else {
+            return of();
           }
-        );
-      }
-    });
+        }))
+      .subscribe();
   }
 }

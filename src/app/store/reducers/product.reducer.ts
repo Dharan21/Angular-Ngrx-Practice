@@ -16,7 +16,12 @@ const productReducre = createReducer(
     on(addProduct, (state: State, {product}) => ({ ...state, products: [ ...state.products, product ] })),
     on(updateProduct, (state: State, {index, newProduct}) => {
         const newProducts = [...state.products];
+        const newCartItems = state.cartItems ? [...state.cartItems] : [];
         newProducts[index] = newProduct;
+        const cartIndex = newCartItems.findIndex(x => x.id === newProduct.id);
+        // if (cartIndex !== -1) {
+        //     const c = 
+        // } 
         return { ...state, products: newProducts};
      }),
     on(addToCart, (state: State, {product}) => {
